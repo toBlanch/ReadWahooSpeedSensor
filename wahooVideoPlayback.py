@@ -2,22 +2,21 @@ import wahooCore
 
 videoRunning = False
 
-async def PressMediaKeys(sender, speedData):
+async def PressMediaKeys():
     global videoRunning
-    mph = await wahooCore.ConvertSpeedDataToMPH(sender, speedData)
 
-    if mph > 1:
+    if wahooCore.mph > 1:
         if not videoRunning:
             pyautogui.press('playpause')
             videoRunning = True
 
-        if mph < 2:
+        if wahooCore.mph < 2:
             #0.25x
             pyautogui.hotkey('ctrl', 'shift', 'h')
-        elif mph < 3:
+        elif wahooCore.mph < 3:
             #0.5x
             pyautogui.hotkey('ctrl', 'shift', 'j')
-        elif mph < 4:
+        elif wahooCore.mph < 4:
             #1x
             pyautogui.hotkey('ctrl', 'shift', 'k')
         else:

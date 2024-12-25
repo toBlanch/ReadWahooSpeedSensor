@@ -4,20 +4,15 @@ import asyncio
 
 count = 0
 
-async def CountDown(sender, speedData):
+def CountDown():
     global count
-    mph = await wahooCore.ConvertSpeedDataToMPH(sender, speedData)
-
-    # if(count > 0):
-    if(mph > 2):
+    
+    if(wahooCore.MPH > 1.7):
         count += 1
-    elif mph < 1:
+    elif wahooCore.MPH < 0.5:
         count = 0
     
     os.system('cls')
     print(count)
-    # else:
-    #     print("YOU WON!")
-    #     await asyncio.sleep()
 
 asyncio.run(wahooCore.run(CountDown))

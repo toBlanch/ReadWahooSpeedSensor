@@ -3,18 +3,20 @@ import asyncio
 
 SPEED_UUID = "00002a5b-0000-1000-8000-00805f9b34fb"
 videoRunning = False
-previousMPH = 1 / 10**16
+MPH = 1 / 10**16
+previousMPH = MPH
 
 async def ConvertSpeedDataToMPH(sender, speedData):
+    global MPH
     global previousMPH
+
     speed = int.from_bytes(speedData, byteorder='little')
-    mph = speed / 10**16
+    MPH = speed / 10**16
 
-    if mph == previousMPH:
-        return 0
+    if MPH == previousMPH:
+        MPH = 0
 
-    previousMPH = mph
-    return mph
+    previousMPH = MPH
 
 async def DiscoverWahooSpeedSensor():
     print("Discovering devices...")
@@ -36,8 +38,9 @@ async def GetWahooSpeedSensor():
     return wahooSpeedSensor
 
 async def CaptureNotifications(wahooSpeedSensorClient, functionToRunOnNotification):
-    await wahooSpeedSensorClient.start_notify(SPEED_UUID, functionToRunOnNotification)
+    await wahooSpeedSensorClient.start_notify(SPEED_UUID, ConvertSpeedDataToMPH)
     while True:
+        functionToRunOnNotification()
         await asyncio.sleep(1)  
 
 
