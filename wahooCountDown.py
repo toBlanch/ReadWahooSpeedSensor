@@ -7,9 +7,9 @@ count = 0
 def CountDown():
     global count
     
-    if(wahooCore.MPH > 1.7):
+    if(wahooCore.MPH > 0):
         count += 1
-    elif wahooCore.MPH < 0.5:
+    else:
         count = 0
     
     os.system('cls')
