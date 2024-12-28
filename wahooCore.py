@@ -5,10 +5,13 @@ wahooSpeedSensor = None
 SPEED_UUID = "00002a5b-0000-1000-8000-00805f9b34fb"
 MPH = 0
 previousDistance = 0
+functionToRunOnNotify = None
 
-async def run(functionToRunOnNotification):
+async def run(rFunctionToRunOnNotify = None):
+    global functionToRunOnNotify
+    functionToRunOnNotify = rFunctionToRunOnNotify
     await DiscoverWahooSpeedSensor()
-    await CaptureNotifications(functionToRunOnNotification)
+    await wahooSpeedSensor.start_notify(SPEED_UUID, ConvertSpeedDataToMPH)
 
 async def DiscoverWahooSpeedSensor():
     global wahooSpeedSensor
@@ -20,19 +23,14 @@ async def DiscoverWahooSpeedSensor():
                 await wahooSpeedSensor.connect()
                 print(f"Connected to {device.name} - {device.address}")
 
-async def CaptureNotifications(functionToRunOnNotification):
-    global wahooSpeedSensor
-    await wahooSpeedSensor.start_notify(SPEED_UUID, ConvertSpeedDataToMPH)
-    while True:
-        functionToRunOnNotification()
-        await asyncio.sleep(1)  
-
 async def ConvertSpeedDataToMPH(sender, speedData):
     global MPH
     global previousDistance
     distance = int.from_bytes(speedData, byteorder='little')
     MPH = distance - previousDistance
     previousDistance = distance
+    if functionToRunOnNotify != None:
+        functionToRunOnNotify()
 
 async def ListAllUUIDs():
     global wahooSpeedSensor

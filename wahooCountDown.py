@@ -4,15 +4,22 @@ import asyncio
 
 count = 0
 
-def CountDown():
+async def CountDown():
     global count
     
-    if(wahooCore.MPH > 0):
-        count += 1
-    else:
-        count = 0
-    
-    os.system('cls')
-    print(count)
+    while True:
+        if(wahooCore.MPH > 0):
+            count += 1
+        else:
+            count = 0
+        
+        os.system('cls')
+        print(count)
+        await asyncio.sleep(1)
 
-asyncio.run(wahooCore.run(CountDown))
+
+async def main():
+    await wahooCore.run()
+    await CountDown()
+
+asyncio.run(main())

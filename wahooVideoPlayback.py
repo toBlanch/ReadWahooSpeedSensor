@@ -1,22 +1,24 @@
 import wahooCore
+import asyncio
+import pyautogui
 
 videoRunning = False
 
-async def PressMediaKeys():
+def PressMediaKeys():
     global videoRunning
 
-    if wahooCore.mph > 1:
+    if wahooCore.MPH > 1:
         if not videoRunning:
             pyautogui.press('playpause')
             videoRunning = True
 
-        if wahooCore.mph < 2:
+        if wahooCore.MPH < 2:
             #0.25x
             pyautogui.hotkey('ctrl', 'shift', 'h')
-        elif wahooCore.mph < 3:
+        elif wahooCore.MPH < 3:
             #0.5x
             pyautogui.hotkey('ctrl', 'shift', 'j')
-        elif wahooCore.mph < 4:
+        elif wahooCore.MPH < 4:
             #1x
             pyautogui.hotkey('ctrl', 'shift', 'k')
         else:
@@ -27,4 +29,10 @@ async def PressMediaKeys():
         pyautogui.press('playpause') 
         videoRunning = False
 
-asyncio.run(wahooCore.run(PressMediaKeys))
+async def main():
+    await wahooCore.run(PressMediaKeys)
+    while True:
+        await asyncio.sleep(1)
+
+asyncio.run(main())
+    
