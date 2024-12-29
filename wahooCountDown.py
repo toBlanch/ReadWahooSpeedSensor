@@ -8,14 +8,19 @@ async def CountDown():
     global count
     
     while True:
+        countChanged = False
         if(wahooCore.MPH > 0):
             count += 1
-        else:
+            countChanged = True
+        elif count != 0:
             count = 0
+            countChanged = True
         
-        os.system('cls')
-        print(count)
-        await asyncio.sleep(1)
+        if countChanged:
+            os.system('cls')
+            print(count)
+
+        await asyncio.sleep(2)
 
 
 async def main():
