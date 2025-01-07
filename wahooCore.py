@@ -6,7 +6,10 @@ wahooSpeedSensor = None
 SPEED_UUID = "00002a5b-0000-1000-8000-00805f9b34fb"
 MPH = 0
 previousDistance = 0
+previousTime = None
 functionToRunOnNotify = None
+
+WHEEL_CIRCUMFERENCE = 1
 
 async def run(rFunctionToRunOnNotify = None):
     global functionToRunOnNotify
@@ -37,12 +40,24 @@ async def DiscoverWahooSpeedSensor():
 async def ConvertSpeedDataToMPH(sender, speedData):
     global MPH
     global previousDistance
+    global previousTime
+    global WHEEL_CIRCUMFERENCE
 
+    currentTime = asyncio.get_event_loop().time()
     distance = int.from_bytes(speedData, byteorder='little')
-    MPH = distance - previousDistance
-    previousDistance = distance
 
-    if functionToRunOnNotify != None:
+    if previousTime is not None:
+        timeElapsed = currentTime - previousTime
+        if timeElapsed == 0:
+            return
+        
+        distanceTraveled = (distance - previousDistance) * WHEEL_CIRCUMFERENCE
+        speed_mps = distanceTraveled / timeElapsed
+        MPH = speed_mps * 2.23694 / (10 ** 15)  # convert m/s to mph
+    previousDistance = distance
+    previousTime = currentTime
+
+    if functionToRunOnNotify is not None:
         functionToRunOnNotify()
 
 async def RemainConnected():
